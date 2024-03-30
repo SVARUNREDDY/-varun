@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIME TABLE REMINDER</title>
+    <style>body {
+      margin: 1px 0;
+        font-family: "Arial", sans-serif; background-color:rgb(245, 245, 245);
+        }
+    .container{
+     max-width: 500px;
+     margin: auto;
+     background-color: #ffffff5a;   
+        padding: 1px 20px 20px 20px;
+        border-radius:5px ;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label,
+    input,
+    button{
+     margin: 10px 0;
+    box-sizing: border-box;
+    }
+  input{
+    width: 100%;
+    margin-top: 5px;
+  }
+  table{
+    width: 100%;
+    border-collapse:collapse ;
+    margin-top: 10px;
+  }
+  th,td{
+padding: 5px;
+border: 1px solid #dddddd ;
+text-align: center;
+  }
+  th{
+background-color: #63af4cc1;
+color:rgb(245, 245, 245);
+
+  }
+ button{
+background-color:#4caf50;
+color: whitesmoke;
+padding: 5px;
+border: none;
+
+ }
+ button:hover{
+  background-color: #45a049;
+
+ }
+    </style>
+</head>
+<body>
+    <div class-"container">
+<h2 style="text-align: center">Set time schedule of reminding the class </h2>
+<label for="">CLASS</label>
+<input type="text" id="CLASS" />
+<label for="">TOPIC TO TEACH</label>
+<input type="text" id="TOPIC TO TEACH" />
+<label for="">Date :</label>
+<input type="date" id="date" />
+<label for="">Time :</label>
+<input type="time" id="time" />
+
+<button style="width: 100%" onclick="scheduleReminder();">
+Schedule Reminder </button>
+<table border="1">
+<thead>
+<tr>
+<th>CLASS</th>
+<th>TOPIC TO TEACH</th>
+<th>Date & Time</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="reminderTableBody"></tbody>
+</table>
+</div>
+<audio src="notificationsoundeffect.mp3" id="notificationsound"></audio>
+<script>
+  if("Notification"in window){
+    Notification.requestPermission().then(function(permission){
+      if(Notification.permission !="granted"){
+        alert("PLEASE ALLOW NOTIFICATION ACCESS!");
+        location.reload();
+      }
+    });
+  }
+
+var timeoutIds =[];
+
+function scheduleReminder(){
+  var title =document.getElementById("CLASS").value;
+  var TOPICTOTEACH =document.getElementById("TOPIC TO TEACH").value;
+  var date =document.getElementById("date").value;
+  var time =document.getElementById("time").value;
+
+  var datetimeString=date + " " + time;
+  var scheduledTime=new Date(datetimeString);
+  var currentTime=new Date();
+  var timeDifference=scheduledTime - currentTime;
+
+ if(timeDifference > 0){
+  addReminder(title,TOPICTOTEACH,datetimeString);
+
+var timeoutId= setTimeout(function (){
+document.getElementById("notificationsound").play();
+
+var notification =new Notification(title,{
+  body:TOPICTOTEACH,
+  requireInteraction:true,
+});
+}, timeDifference);
+
+
+
+timeoutIds.push(timeoutId);
+}
+else{
+  alert("The scheduled time is in the past! ");
+}
+
+}
+
+function addReminder(title,TOPICTOTEACH,datetimeString){
+    var tableBody= document.getElementById("reminderTableBody");
+    var row=tableBody.insertRow();
+    var titleCell=row.insertCell(0);
+    var TOPICTOTEACHCell=row.insertCell(1);
+    var dateTimeCell=row.insertCell(2);
+    var actionCell=row.insertCell(3);
+
+    titleCell.innerHTML=title;
+    TOPICTOTEACHCell.innerHTML=TOPICTOTEACH;
+    dateTimeCell.innerHTML=datetimeString;
+    actionCell.innerHTML='<button onclick= "deleteReminder(this);">delete</button>';
+}
+
+
+</script>
+</body>
+</html> 
